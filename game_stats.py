@@ -5,6 +5,11 @@ class GameStats:
         self.ai_settings = ai_settings
         self.reset_stats()
 
+        # Declare attributes in init but initialize in other methods
+        self.ships_left = 0
+        self.score = 0
+        self.level = None
+
         # Start Alien Invasion in an inactive state
         self.game_active = False
 

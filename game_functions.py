@@ -108,8 +108,12 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
     """Respond to bullet-alien collisions"""
     # Remove any bullets and aliens that have collided
     collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+
+    chan1 = pygame.mixer.find_channel()
     if collisions:
         for aliens in collisions.values():
+            invaderkilled = pygame.mixer.Sound('sounds/invaderkilled.wav')
+            chan1.play(invaderkilled)
             stats.score += ai_settings.alien_points * len(aliens)
             sb.prep_score()
         check_high_score(stats, sb)
@@ -127,9 +131,12 @@ def check_bullet_alien_collisions(ai_settings, screen, stats, sb, ship, aliens, 
 
 
 def fire_bullet(ai_settings, screen, ship, bullets):
+    chan1 = pygame.mixer.find_channel()
+    bulletsound = pygame.mixer.Sound('sounds/laser.wav')
     """Fire a bullet if limit not reached yet."""
     # Create a new bullet and add it to the bullets group.
     if len(bullets) < ai_settings.bullets_allowed:
+        chan1.play(bulletsound)
         new_bullet = Bullet(ai_settings, screen, ship)
         bullets.add(new_bullet)
 
@@ -145,16 +152,18 @@ def get_number_rows(ai_settings, ship_height, alien_height):
     """Determine the number of rows of aliens that fit on screen"""
     available_space_y = (ai_settings.screen_height - (3 * alien_height) - ship_height)
     number_rows = int(available_space_y / (2 * alien_height))
-    return number_rows
+    return number_rows + 1
 
 
 def create_alien(ai_settings, screen, aliens, alien_number, row_number):
     """Create an alien and place it in the row"""
     alien = Alien(ai_settings, screen)
     alien_width = alien.rect.width
-    alien.x = alien_width + 2 * alien_width * alien_number
+    # alien.x = alien_width + 2 * alien_width * alien_number
+    alien.x = alien_width * alien_number + 2
     alien.rect.x = alien.x
-    alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+    # alien.rect.y = alien.rect.height + 2 * alien.rect.height * row_number
+    alien.rect.y = alien.rect.height * row_number + 2
     aliens.add(alien)
 
 
@@ -190,6 +199,9 @@ def change_fleet_direction(ai_settings, aliens):
 
 def ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets):
     """Respond to ship being hit by alien"""
+    chan1 = pygame.mixer.find_channel()
+    shipexplode = pygame.mixer.Sound('sounds/shipexplode.wav')
+    chan1.play(shipexplode)
     if stats.ships_left > 0:
         # Decrement ships_left
         stats.ships_left -= 1
@@ -209,6 +221,8 @@ def ship_hit(ai_settings, screen, stats, sb, ship, aliens, bullets):
         sleep(0.5)
 
     else:
+        pygame.mixer.music.load('sounds/gameover.wav')
+        pygame.mixer.music.play()
         stats.game_active = False
         pygame.mouse.set_visible(True)
 

@@ -13,6 +13,15 @@ class Scoreboard:
         self.ai_settings = ai_settings
         self.stats = stats
 
+        # Declare attributes in __init__ but initialize in other methods
+        self.score_image = None
+        self.score_rect = None
+        self.high_score_image = None
+        self.high_score_rect = None
+        self.level_image = None
+        self.level_rect = None
+        self.ships = None
+
         # Font settings for scoring information
         self.text_color = (30, 30, 30)
         self.font = pygame.font.SysFont(None, 48)
@@ -56,8 +65,9 @@ class Scoreboard:
 
     def prep_level(self):
         """Turn the level into a rendered image"""
-        str_level = "Level: "
-        self.level_image = self.font.render("Level: " + str(self.stats.level), True, self.text_color, self.ai_settings.bg_color)
+        # str_level = "Level: "
+        self.level_image = self.font.render("Level: " + str(self.stats.level), True, self.text_color,
+                                            self.ai_settings.bg_color)
 
         # Position the level below the score
         self.level_rect = self.level_image.get_rect()
